@@ -27,3 +27,5 @@ dist/
 .vercel/
 .vscode/
 '@ | Set-Content .gitignore
+.vercel
+.env*

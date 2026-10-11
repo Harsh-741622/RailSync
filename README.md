@@ -72,6 +72,21 @@ The frontend uses `http://localhost:8000/api` by default. To change it, create `
 VITE_API_ROOT=http://localhost:8000/api
 ```
 
+## Vercel deployment
+
+The root [`vercel.json`](vercel.json) deploys two Vercel services on one domain: Vite serves the React single-page application and FastAPI owns `/api` and `/api/*`. API rewrites are evaluated before the SPA fallback, so production browser requests use the same-origin `/api` path without a public `VITE_API_ROOT` setting.
+
+Before deploying, configure a durable PostgreSQL database in the Vercel project (for example, through a Vercel Marketplace Postgres integration) and set **one** of:
+
+```text
+RAILSYNC_DATABASE_URL=postgresql://...
+# or the integration-provided POSTGRES_URL
+```
+
+`backend.database` accepts the usual `postgres://` and `postgresql://` formats and selects the installed Psycopg driver. It intentionally rejects a Vercel startup with no configured database rather than silently creating a non-durable SQLite database.
+
+Production authentication requires both `RAILSYNC_AUTH_MODE=production` and a unique 32+-character `RAILSYNC_AUTH_SECRET` configured as Vercel environment variables. Do not set `VITE_RAILSYNC_AUTH_TOKEN` for production: Vite variables are compiled into the public browser bundle. The current application also needs a trusted identity-provisioning service to issue short-lived signed operator and approver tokens; demo mode must never be deployed.
+
 ## Authentication and operational access
 
 RailSync is a simulator, not a production railway control system. Its local setup deliberately runs in the explicit `demo` mode in [`.env.example`](.env.example), where mutation requests are attributed to **Demo Station Master**. Demo mode is for a local single-user exercise only and must never be used for deployment.

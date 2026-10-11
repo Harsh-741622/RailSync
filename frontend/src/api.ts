@@ -1,4 +1,4 @@
-const API_ROOT = import.meta.env.VITE_API_ROOT || 'http://localhost:8000/api';
+const API_ROOT = import.meta.env.VITE_API_ROOT || (import.meta.env.DEV ? 'http://localhost:8000/api' : '/api');
 const API_TOKEN = import.meta.env.VITE_RAILSYNC_AUTH_TOKEN;
 
 export async function api<T = any>(path: string, options: RequestInit = {}): Promise<T> {
